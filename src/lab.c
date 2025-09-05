@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**
+ * Returns a heap-allocated greeting string for the given name or NULL on error.
+ * AI Use: No AI
+ */
 char *get_greeting(const char *restrict name)
 {
   if (name == NULL)
