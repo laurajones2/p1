@@ -10,6 +10,8 @@
 #define DESTROY(ptr) free(ptr)
 #endif
 
+AllocFn lab_alloc_fn = NULL;
+FreeFn  lab_free_fn  = NULL;
 
 
 //Create List
