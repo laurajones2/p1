@@ -1,68 +1,32 @@
-# Makefile Project Template
+# Project 1
 
-This is a simple Makefile project template that can be used to build, test, and
-debug C projects. It includes support for debug builds, sanitizers, and code
-coverage.
+- Name: Laura Loughmiller
+- Email: laurajones2@u.boisestate.edu
+- Class: 452-001
 
-## Tools and Dependencies
+## Known Bugs or Issues
 
-- GNU Make
-- GCC or Clang
-- Address Sanitizer (ASan) for memory error detection
-- gcov and lcov for code coverage
-- gcovr for generating coverage reports
-- pandoc for generating docx reports (optional)
+No known Bugs or Issues
 
-## Test Harness
+## Experience
 
-This project uses the Unity Test Framework for unit testing. Refer to the
-[Unity Getting Started Guide](https://github.com/ThrowTheSwitch/Unity/blob/master/docs/UnityGettingStartedGuide.md) for more information on how to write and run tests.
+I remembered why I don't like C...
 
-## Example Usage
+### Problem: I needed to test allocation-failure branches
+but lab.c was compiled in a separate translation unit, so my test-side #define ALLOC=... didn’t affect it. Including lab.c in tests caused duplicate symbols because the Makefile already compiled it.
 
-To build the project run:
+### Solution: hooks
+In lab.h: define AllocFn/FreeFn and extern AllocFn lab_alloc_fn; extern FreeFn lab_free_fn;, then
+     #define ALLOC(sz)   (lab_alloc_fn ? lab_alloc_fn(sz) : malloc(sz))
+     #define DESTROY(p)  do { if (lab_free_fn) lab_free_fn(p); else free(p); } while (0)
+In lab.c: define the globals once:
+     AllocFn lab_alloc_fn = NULL;
+     FreeFn  lab_free_fn  = NULL;
+In tests (setUp): point hooks to the test doubles:
+    lab_alloc_fn = test_alloc;
+    lab_free_fn  = test_destroy;
 
-```bash
-make all
-```
-To run the executable:
+#### Why it works: No Makefile changes. 
+lab.c still compiles normally, but at runtime the tests can inject a failing allocator. In production, hooks are NULL → real malloc/free.
 
-```bash
-./build/release/myapp
-```
-
-To run the unit tests:
-
-```bash
-make check
-```
-
-To see all the configurations, run `make help`
-
-```bash
-Usage: make [target]
-Available targets:
-  debug     - Build the application in debug mode (default)
-  release   - Build the application in release mode
-  test      - Build the unit tests
-  all       - Builds debug, release, and test targets
-  check     - Run tests and check results
-  report    - Generate coverage report after running tests
-  leak      - Check for memory leaks in debug mode
-  clean     - Remove build artifacts
-  print     - Print build variables for MakeFile debugging
-  help      - Show this help message
-```
-
-## VS Code Integration
-
-This project is designed to work well with Visual Studio Code. Configurations
-for debugging the application and unit tests are provided. Read about how to
-use the debugger in the [VS Code documentation](https://code.visualstudio.com/docs/editor/debugging).
-
-## Features
-
-- Build targets for debug and release modes
-- Support for Address Sanitizer (ASan)
-- Code coverage support and report generation
-- Simple structure for organizing source files and build artifacts
+Used a smoke test to confirm the hook is hit (alloc count ≥ 2 in list_create), then forced failures (alloc_fail_after = 1/2) to cover error paths in list_create, list_append, and list_insert.
