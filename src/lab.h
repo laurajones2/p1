@@ -6,20 +6,21 @@
 #include <stdlib.h>   // for malloc, free.  
  #include <stdlib.h>   // malloc, free
 
-// ---- alloc/free hook types + externs ----
-typedef void *(*AllocFn)(size_t);
-typedef void (*FreeFn)(void *);
-extern AllocFn lab_alloc_fn;
-extern FreeFn  lab_free_fn;
+//alloc/free hook types + externs
+typedef void *(*AllocFn)(size_t); //function pointers
+typedef void (*FreeFn)(void *); //Function pointers
+extern AllocFn lab_alloc_fn; //golbal function pointer for custom allocation
+extern FreeFn  lab_free_fn; //golbal function pointer for custom free
 
+/*is a macro wrapper around allocation.
+If lab_alloc_fn is set, call it (test hook).
+Otherwise call malloc(sz).*/
 #ifndef ALLOC
 #  define ALLOC(sz)   (lab_alloc_fn ? lab_alloc_fn(sz) : malloc(sz))
 #endif
 #ifndef DESTROY
 #  define DESTROY(p)  do { if (lab_free_fn) lab_free_fn(p); else free(p); } while (0)
 #endif
-
-
 
 /**
  * @file lab.h

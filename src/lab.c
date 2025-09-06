@@ -1,5 +1,4 @@
 #include "lab.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,25 +9,37 @@
 #define DESTROY(ptr) free(ptr)
 #endif
 
+/**
+ * Global function pointer for custom allocation/deallocation. Set to NULL to use default ALLOC.
+ * AI Use: Written By AI
+ */
 AllocFn lab_alloc_fn = NULL;
 FreeFn  lab_free_fn  = NULL;
 
-
-//Create List
-// private node structure
+/**
+ * Node structure for the circular, doubly linked list.
+ * AI Use: AI Assisted
+ */
 typedef struct Node {
     void *data;
     struct Node *prev;
     struct Node *next;
 } Node;
 
-// list structure definition
+/**
+ * List structure definition for the circular, doubly linked list with sentinel node.
+ * AI Use: AI Assisted
+ */
 struct List {
     size_t size;
     ListType type;
     Node *sentinel;
 };
 
+/**
+ * Creates a new circular, doubly linked list with a sentinel node.
+ * AI Use: AI Assisted
+ */
 List *list_create(ListType type) {
     // Allocate memory for the list
     List *list = ALLOC(sizeof(List));
@@ -56,8 +67,10 @@ List *list_create(ListType type) {
     return list;
 }
 
-//Detroy List
-
+/**
+ * Destroys the list and frees all associated memory. Calls free_func on each data element if provided.
+ * AI Use: AI Assisted
+ */
 void list_destroy(List *list, FreeFunc free_func) {
     if (!list) return;
     Node *sentinel = list->sentinel;
@@ -74,7 +87,10 @@ void list_destroy(List *list, FreeFunc free_func) {
     DESTROY(list);
 }
 
-//Append List
+/**
+ * Appends a new element to the end of the list.
+ * AI Use: AI Assisted
+ */
 bool list_append(List *list, void *data) {
     if (!list || !list->sentinel) return false;
     Node *new_node = ALLOC(sizeof(Node));
@@ -94,7 +110,10 @@ bool list_append(List *list, void *data) {
     return true;
 }
 
-//Insert List
+/**
+ * Inserts a new element at the specified index in the list.
+ * AI Use: AI Assisted
+ */
 bool list_insert(List *list, size_t index, void *data) {
     if (!list || !list->sentinel) return false;
     if (index > list->size) return false; // index out of bounds
@@ -119,8 +138,10 @@ bool list_insert(List *list, size_t index, void *data) {
     return true;
 }
 
-//Remove List 
-
+/**
+ * Removes the element at the specified index from the list and returns its data pointer.
+ * AI Use: AI Assisted
+ */
 void *list_remove(List *list, size_t index) {
     if (!list || !list->sentinel) return NULL;
     if (index >= list->size) return NULL;
@@ -137,8 +158,10 @@ void *list_remove(List *list, size_t index) {
     return data;
 }
 
-//List get
-
+/**
+ * Returns the data pointer at the specified index in the list.
+ * AI Use: AI Assisted
+ */
 void *list_get(const List *list, size_t index) {
     if (!list || !list->sentinel) return NULL;
     if (index >= list->size) return NULL;
@@ -149,15 +172,19 @@ void *list_get(const List *list, size_t index) {
     return curr->data;
 }
 
-//Size List
-
+/**
+ * Returns the number of elements in the list.
+ * AI Use: AI Assisted
+ */
 size_t list_size(const List *list) {
     if (!list) return 0;
     return list->size;
 }
 
-//Empty List?
-
+/**
+ * Returns true if the list is empty, false otherwise.
+ * AI Use: AI Assisted
+ */
 bool list_is_empty(const List *list) {
     if (!list) return true;
     return list->size == 0;

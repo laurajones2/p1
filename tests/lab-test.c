@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "harness/unity.h"
 
-
+//All tests written by AI
 
 // --- ALLOC/DESTROY mocking for allocation failure testing ---
 static int alloc_fail_after = -1;
@@ -18,7 +18,6 @@ void *test_alloc(size_t size) {
 void test_destroy(void *ptr) {
     free(ptr);
 }
-
 
 #include "../src/lab.h"
 
@@ -164,6 +163,44 @@ void test_list_insert_alloc_failure(void) {
     alloc_fail_after = -1;
 }
 
+static void test_get_last_index_and_oob(void) {
+  List *list = list_create(LIST_LINKED_SENTINEL);
+  int a=1,b=2;
+  list_append(list,&a);
+  list_append(list,&b);
+  TEST_ASSERT_EQUAL_PTR(&b, list_get(list, list_size(list)-1));
+  TEST_ASSERT_NULL(list_get(list, list_size(list))); // OOB
+  list_destroy(list,NULL);
+}
+
+static void test_insert_head_tail_and_remove_to_empty(void) {
+  List *list = list_create(LIST_LINKED_SENTINEL);
+  int a=1,b=2,c=3;
+  TEST_ASSERT_TRUE(list_insert(list, 0, &a));               // head insert into empty
+  TEST_ASSERT_TRUE(list_insert(list, list_size(list), &b));  // tail insert
+  TEST_ASSERT_TRUE(list_insert(list, 1, &c));                // middle
+  // a, c, b
+  TEST_ASSERT_EQUAL_PTR(&a, list_get(list, 0));
+  TEST_ASSERT_EQUAL_PTR(&c, list_get(list, 1));
+  TEST_ASSERT_EQUAL_PTR(&b, list_get(list, 2));
+
+  TEST_ASSERT_EQUAL_PTR(&a, list_remove(list, 0));                         // remove head
+  TEST_ASSERT_EQUAL_PTR(&b, list_remove(list, list_size(list)-1));         // remove tail
+  TEST_ASSERT_EQUAL_PTR(&c, list_remove(list, 0));                         // last one
+  TEST_ASSERT_TRUE(list_is_empty(list));
+  list_destroy(list, NULL);
+}
+
+static void test_null_list_guards(void) {
+  int x=42;
+  TEST_ASSERT_FALSE(list_append(NULL,&x));
+  TEST_ASSERT_FALSE(list_insert(NULL,0,&x));
+  TEST_ASSERT_NULL(list_get(NULL,0));
+  TEST_ASSERT_NULL(list_remove(NULL,0));
+  TEST_ASSERT_EQUAL_UINT32(0, list_size(NULL));
+  TEST_ASSERT_TRUE(list_is_empty(NULL));
+}
+
 int main(void) {
   UNITY_BEGIN();
   RUN_TEST(test_create_and_destroy);
@@ -177,5 +214,8 @@ int main(void) {
   RUN_TEST(test_list_create_alloc_failure);
   RUN_TEST(test_destroy_calls_destructor);
   RUN_TEST(test_list_insert_alloc_failure);
+  RUN_TEST(test_get_last_index_and_oob);
+  RUN_TEST(test_insert_head_tail_and_remove_to_empty);
+  RUN_TEST(test_null_list_guards);
   return UNITY_END();
 }
