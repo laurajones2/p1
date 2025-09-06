@@ -132,6 +132,38 @@ void test_list_append_alloc_failure(void) {
     list_destroy(list, NULL);
     alloc_fail_after = -1; // reset
 }
+
+static int free_count = 0;
+static void dummy_free(void *ptr) { (void)ptr; free_count++; }
+
+void test_destroy_calls_destructor(void) {
+    List *list = list_create(LIST_LINKED_SENTINEL);
+    int a=1, b=2;
+    list_append(list, &a);
+    list_append(list, &b);
+
+    free_count = 0;
+    list_destroy(list, dummy_free);
+    TEST_ASSERT_EQUAL_INT(2, free_count);
+}
+
+void test_list_insert_alloc_failure(void) {
+    List *list = list_create(LIST_LINKED_SENTINEL);
+    int a = 1, b = 2;
+    list_append(list, &a);
+
+    alloc_fail_after = 1; // fail on allocation inside insert
+    alloc_call_count = 0;
+    TEST_ASSERT_FALSE(list_insert(list, 1, &b));
+
+    // state unchanged
+    TEST_ASSERT_EQUAL_UINT32(1, list_size(list));
+    TEST_ASSERT_EQUAL_PTR(&a, list_get(list, 0));
+
+    list_destroy(list, NULL);
+    alloc_fail_after = -1;
+}
+
 int main(void) {
   UNITY_BEGIN();
   RUN_TEST(test_create_and_destroy);
@@ -143,5 +175,7 @@ int main(void) {
   RUN_TEST(test_alloc_hook_smoke);
   RUN_TEST(test_list_append_alloc_failure);
   RUN_TEST(test_list_create_alloc_failure);
+  RUN_TEST(test_destroy_calls_destructor);
+  RUN_TEST(test_list_insert_alloc_failure);
   return UNITY_END();
 }
