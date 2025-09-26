@@ -212,7 +212,6 @@ void list_sort(List *list, size_t start, size_t end,
     // GCOVR_EXCL_STOP
 }
 
-
     // Simple selection-style sort over [start, end)
     for (size_t i = 0; i < count - 1; ++i) {
         Node *min_node = node_i;
@@ -239,7 +238,6 @@ void list_sort(List *list, size_t start, size_t end,
         if (node_i == list->sentinel) break; // safety
     }
 }
-
 
 /**
  * Merges list2 into list1 in sorted order using the provided comparison function.
@@ -292,10 +290,14 @@ int compare_int(const void *a, const void *b) {
  * AI Use: Written By AI
  */
 int compare_str(const void *a, const void *b) {
-    const char *str_a = *(const char **)a;
-    const char *str_b = *(const char **)b;
-    return strcmp(str_a, str_b);
+    const char *sa = (const char *)a;
+    const char *sb = (const char *)b;
+    if (!sa && !sb) return 0;
+    if (!sa) return -1;
+    if (!sb) return 1;
+    return strcmp(sa, sb);
 }
+
 
 /**
  * Checks if the list is sorted according to the provided comparison function.
