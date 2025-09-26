@@ -302,14 +302,23 @@ int compare_str(const void *a, const void *b) {
  * AI Use: Written By AI
  */
 bool is_sorted(const List *list, int (*cmp)(const void *, const void *)) {
-    if (!list || !cmp || list->size < 2) return true;
-    Node *curr = list->sentinel->next;
-    for (size_t i = 1; i < list->size; ++i) {
-        Node *next = curr->next;
-        if (cmp(curr->data, next->data) > 0) {
+    if (!list || !cmp) return false;          // defensive: need a list and a comparator
+    if (list->size < 2) return true;          // empty or single element is sorted
+
+    // Traverse without modifying the list
+    const Node *prev = list->sentinel->next;
+    const Node *curr = prev->next;
+    size_t checked = 1;
+
+    while (checked < list->size) {
+        // In-order if prev <= curr according to cmp; cmp>0 means out of order
+        if (cmp(prev->data, curr->data) > 0) {
             return false;
         }
-        curr = next;
+        prev = curr;
+        curr = curr->next;
+        ++checked;
     }
     return true;
 }
+
