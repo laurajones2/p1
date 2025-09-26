@@ -106,4 +106,44 @@ size_t list_size(const List *list);
  */
 bool list_is_empty(const List *list);
 
+/**
+ * @brief Sorts elements in the list between start and end indices using the provided comparison function.
+ * @param list Pointer to the list.
+ * @param start The starting index (inclusive).
+ * @param end The ending index (exclusive).
+ * @param cmp Comparison function: returns <0, 0, >0 for less, equal, greater.
+ */
+void list_sort(List *list, size_t start, size_t end, int (*cmp)(const void *, const void *));
+
+/**
+ * @brief Merges list2 into list1 in sorted order using the provided comparison function.
+ * @param list1 Pointer to the first list (destination).
+ * @param list2 Pointer to the second list (source, will be emptied).
+ * @param cmp Comparison function: returns <0, 0, >0 for less, equal, greater.
+ */
+void list_merge(List *list1, List *list2, int (*cmp)(const void *, const void *));
+
+/**
+ * @brief Comparison function for sorting integers in descending order.
+ * @param a Pointer to the first integer.
+ * @param b Pointer to the second integer.
+ * @return Negative if *a > *b, zero if equal, positive if *a < *b.
+ */
+int compare_int(const void *a, const void *b);
+
+/**
+ * @brief Comparison function for sorting strings in lexicographical order.
+ * @param a Pointer to the first string (const char *).
+ * @param b Pointer to the second string (const char *).
+ * @return Negative if a < b, zero if equal, positive if a > b.
+ */
+int compare_str(const void *a, const void *b);
+
+/**
+ * @brief Checks if the list is sorted according to the provided comparison function.
+ * @param list Pointer to the list.
+ * @param cmp Comparison function: returns <0, 0, >0 for less, equal, greater.
+ * @return true if sorted, false otherwise.
+ */
+bool is_sorted(const List *list, int (*cmp)(const void *, const void *));
 #endif // LAB_H

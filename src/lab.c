@@ -189,3 +189,99 @@ bool list_is_empty(const List *list) {
     if (!list) return true;
     return list->size == 0;
 }
+
+/**
+ * Sorts the elements in the list between start and end indices using the provided comparison function.
+ * The comparison function should return <0, 0, >0 for less, equal, greater.
+ * AI Use: AI assisted
+ */
+void list_sort(List *list, size_t start, size_t end, int (*cmp)(const void *, const void *)) {
+    if (!list || !list->sentinel || start >= end || end > list->size || !cmp) return;
+    // Simple bubble sort for demonstration
+    for (size_t i = start; i < end - 1; ++i) {
+        Node *node_i = list->sentinel->next;
+        for (size_t skip = 0; skip < i; ++skip) node_i = node_i->next;
+        for (size_t j = i + 1; j < end; ++j) {
+            Node *node_j = node_i;
+            for (size_t step = j - i; step > 0; --step) node_j = node_j->next;
+            if (cmp(node_i->data, node_j->data) > 0) {
+                void *tmp = node_i->data;
+                node_i->data = node_j->data;
+                node_j->data = tmp;
+            }
+        }
+    }
+}
+
+/**
+ * Merges list2 into list1 in sorted order using the provided comparison function.
+ * The merged result is stored in list1. list2 will be emptied but not destroyed.
+ * AI Use: Written By AI
+ */
+void list_merge(List *list1, List *list2, int (*cmp)(const void *, const void *)) {
+    if (!list1 || !list2 || !cmp || !list1->sentinel || !list2->sentinel) return;
+
+    Node *curr2 = list2->sentinel->next;
+    while (curr2 != list2->sentinel) {
+        void *data = curr2->data;
+        // Find insertion point in list1
+        Node *curr1 = list1->sentinel->next;
+        size_t index = 0;
+        while (curr1 != list1->sentinel && cmp(data, curr1->data) > 0) {
+            curr1 = curr1->next;
+            index++;
+        }
+        list_insert(list1, index, data);
+        curr2 = curr2->next;
+    }
+    // Empty list2
+    Node *sentinel2 = list2->sentinel;
+    Node *curr = sentinel2->next;
+    while (curr != sentinel2) {
+        Node *next = curr->next;
+        DESTROY(curr);
+        curr = next;
+    }
+    sentinel2->next = sentinel2;
+    sentinel2->prev = sentinel2;
+    list2->size = 0;
+}
+
+/**
+ * Comparison function for sorting integers in descending order.
+ * AI Use: Written By AI
+ */
+int compare_int(const void *a, const void *b) {
+    int int_a = *(const int *)a;
+    int int_b = *(const int *)b;
+    return int_b - int_a;
+}
+
+#include <string.h>
+
+/**
+ * Comparison function for sorting strings in lexicographical order.
+ * AI Use: Written By AI
+ */
+int compare_str(const void *a, const void *b) {
+    const char *str_a = *(const char **)a;
+    const char *str_b = *(const char **)b;
+    return strcmp(str_a, str_b);
+}
+
+/**
+ * Checks if the list is sorted according to the provided comparison function.
+ * AI Use: Written By AI
+ */
+bool is_sorted(const List *list, int (*cmp)(const void *, const void *)) {
+    if (!list || !cmp || list->size < 2) return true;
+    Node *curr = list->sentinel->next;
+    for (size_t i = 1; i < list->size; ++i) {
+        Node *next = curr->next;
+        if (cmp(curr->data, next->data) > 0) {
+            return false;
+        }
+        curr = next;
+    }
+    return true;
+}

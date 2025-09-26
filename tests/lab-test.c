@@ -201,6 +201,72 @@ static void test_null_list_guards(void) {
   TEST_ASSERT_TRUE(list_is_empty(NULL));
 }
 
+void test_compare_int(void) {
+    int a = 5, b = 10;
+    TEST_ASSERT_TRUE(compare_int(&a, &b) > 0); // b > a, descending
+    TEST_ASSERT_TRUE(compare_int(&b, &a) < 0); // a < b, descending
+    TEST_ASSERT_EQUAL_INT(0, compare_int(&a, &a));
+}
+
+void test_compare_str(void) {
+    const char *s1 = "apple";
+    const char *s2 = "banana";
+    TEST_ASSERT_TRUE(compare_str(&s1, &s2) < 0); // apple < banana
+    TEST_ASSERT_TRUE(compare_str(&s2, &s1) > 0); // banana > apple
+    TEST_ASSERT_EQUAL_INT(0, compare_str(&s1, &s1));
+}
+
+void test_list_sort_int(void) {
+    List *list = list_create(LIST_LINKED_SENTINEL);
+    int vals[] = {5, 2, 9, 1, 7};
+    for (int i = 0; i < 5; ++i) list_append(list, &vals[i]);
+    list_sort(list, 0, list_size(list), compare_int);
+    TEST_ASSERT_TRUE(is_sorted(list, compare_int));
+    int expected[] = {9, 7, 5, 2, 1};
+    for (int i = 0; i < 5; ++i)
+        TEST_ASSERT_EQUAL_INT(expected[i], *(int *)list_get(list, i));
+    list_destroy(list, NULL);
+}
+
+void test_list_sort_str(void) {
+    List *list = list_create(LIST_LINKED_SENTINEL);
+    const char *vals[] = {"pear", "apple", "banana", "kiwi"};
+    for (int i = 0; i < 4; ++i) list_append(list, (void *)&vals[i]);
+    list_sort(list, 0, list_size(list), compare_str);
+    TEST_ASSERT_TRUE(is_sorted(list, compare_str));
+    const char *expected[] = {"apple", "banana", "kiwi", "pear"};
+    for (int i = 0; i < 4; ++i)
+        TEST_ASSERT_EQUAL_STRING(expected[i], *(const char **)list_get(list, i));
+    list_destroy(list, NULL);
+}
+
+void test_list_merge_int(void) {
+    List *l1 = list_create(LIST_LINKED_SENTINEL);
+    List *l2 = list_create(LIST_LINKED_SENTINEL);
+    int a[] = {7, 3, 1};
+    int b[] = {8, 6, 2};
+    for (int i = 0; i < 3; ++i) list_append(l1, &a[i]);
+    for (int i = 0; i < 3; ++i) list_append(l2, &b[i]);
+    list_sort(l1, 0, list_size(l1), compare_int);
+    list_sort(l2, 0, list_size(l2), compare_int);
+    list_merge(l1, l2, compare_int);
+    TEST_ASSERT_TRUE(is_sorted(l1, compare_int));
+    int expected[] = {8, 7, 6, 3, 2, 1};
+    for (int i = 0; i < 6; ++i)
+        TEST_ASSERT_EQUAL_INT(expected[i], *(int *)list_get(l1, i));
+    TEST_ASSERT_EQUAL_UINT32(0, list_size(l2)); // l2 should be empty
+    list_destroy(l1, NULL);
+    list_destroy(l2, NULL);
+}
+
+void test_is_sorted_false(void) {
+    List *list = list_create(LIST_LINKED_SENTINEL);
+    int vals[] = {1, 2, 3};
+    for (int i = 0; i < 3; ++i) list_append(list, &vals[i]);
+    TEST_ASSERT_FALSE(is_sorted(list, compare_int)); // ascending, but compare_int expects descending
+    list_destroy(list, NULL);
+}
+
 int main(void) {
   UNITY_BEGIN();
   RUN_TEST(test_create_and_destroy);
@@ -217,5 +283,11 @@ int main(void) {
   RUN_TEST(test_get_last_index_and_oob);
   RUN_TEST(test_insert_head_tail_and_remove_to_empty);
   RUN_TEST(test_null_list_guards);
+  RUN_TEST(test_compare_int);
+  RUN_TEST(test_compare_str);
+  RUN_TEST(test_list_sort_int);
+  RUN_TEST(test_list_sort_str);
+  RUN_TEST(test_list_merge_int);
+  RUN_TEST(test_is_sorted_false);
   return UNITY_END();
 }
