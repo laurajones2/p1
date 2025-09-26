@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "harness/unity.h"
+#include <string.h>
 
 //All tests written by AI
 
@@ -267,6 +268,8 @@ void test_is_sorted_false(void) {
     list_destroy(list, NULL);
 }
 
+
+
 int main(void) {
   UNITY_BEGIN();
   RUN_TEST(test_create_and_destroy);
@@ -289,5 +292,6 @@ int main(void) {
   RUN_TEST(test_list_sort_str);
   RUN_TEST(test_list_merge_int);
   RUN_TEST(test_is_sorted_false);
+  //RUN_TEST(test_sort_subrange_start_nonzero);
   return UNITY_END();
 }

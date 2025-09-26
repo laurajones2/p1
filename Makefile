@@ -16,7 +16,7 @@ CFLAGS += -fstack-protector-strong
 CFLAGS += -Werror=format-security -Werror=implicit -Werror=incompatible-pointer-types -Werror=int-conversion
 
 # For threading uncomment the next line
-#LDFLAGS ?= -pthread
+LDFLAGS ?= -pthread
 
 # Build configurations
 ifeq ($(BUILD),release)
