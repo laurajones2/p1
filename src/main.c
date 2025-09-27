@@ -61,8 +61,6 @@ int main(int argc, char *argv[]) {
     }
     size_t n = (size_t)nlong;
 
-    //srand((unsigned)time(NULL));
-
     List *list = list_create(LIST_LINKED_SENTINEL);
     if (!list) { fprintf(stderr, "Failed to create list.\n"); return 1; }
 

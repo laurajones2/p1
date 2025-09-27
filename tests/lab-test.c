@@ -232,14 +232,22 @@ void test_list_sort_int(void) {
 void test_list_sort_str(void) {
     List *list = list_create(LIST_LINKED_SENTINEL);
     const char *vals[] = {"pear", "apple", "banana", "kiwi"};
-    for (int i = 0; i < 4; ++i) list_append(list, (void *)&vals[i]);
+
+    for (int i = 0; i < 4; ++i) {
+        list_append(list, (void *)vals[i]);     // << store char* itself
+    }
+
     list_sort(list, 0, list_size(list), compare_str);
     TEST_ASSERT_TRUE(is_sorted(list, compare_str));
+
     const char *expected[] = {"apple", "banana", "kiwi", "pear"};
-    for (int i = 0; i < 4; ++i)
-        TEST_ASSERT_EQUAL_STRING(expected[i], *(const char **)list_get(list, i));
-    list_destroy(list, NULL);
+    for (int i = 0; i < 4; ++i) {
+        TEST_ASSERT_EQUAL_STRING(expected[i], (const char *)list_get(list, i)); // << no extra *
+    }
+
+    list_destroy(list, NULL); // literals: no frees needed
 }
+
 
 void test_list_merge_int(void) {
     List *l1 = list_create(LIST_LINKED_SENTINEL);

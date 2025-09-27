@@ -1,6 +1,7 @@
 #include "lab.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef ALLOC
 #define ALLOC(size) malloc(size)
@@ -284,19 +285,21 @@ int compare_int(const void *a, const void *b) {
 }
 
 #include <string.h>
-
 /**
  * Comparison function for sorting strings in lexicographical order.
  * AI Use: Written By AI
  */
 int compare_str(const void *a, const void *b) {
-    const char *sa = (const char *)a;
+    const char *sa = (const char *)a;   // single cast, NOT double-deref
     const char *sb = (const char *)b;
     if (!sa && !sb) return 0;
     if (!sa) return -1;
     if (!sb) return 1;
-    return strcmp(sa, sb);
+    return strcmp(sa, sb);               // ascending lexicographic
 }
+
+#include <string.h>
+
 
 
 /**
