@@ -12,7 +12,7 @@
 
 /**
  * Global function pointer for custom allocation/deallocation. Set to NULL to use default ALLOC.
- * AI Use: Written By AI
+ * AI Use: AI Assisted
  */
 AllocFn lab_alloc_fn = NULL;
 FreeFn  lab_free_fn  = NULL;
@@ -276,7 +276,7 @@ void list_merge(List *list1, List *list2, int (*cmp)(const void *, const void *)
 
 /**
  * Comparison function for sorting integers in descending order.
- * AI Use: Written By AI
+ * AI Use: AI Assisted
  */
 int compare_int(const void *a, const void *b) {
     int int_a = *(const int *)a;
@@ -287,7 +287,7 @@ int compare_int(const void *a, const void *b) {
 #include <string.h>
 /**
  * Comparison function for sorting strings in lexicographical order.
- * AI Use: Written By AI
+ * AI Use: AI Assisted
  */
 int compare_str(const void *a, const void *b) {
     const char *sa = (const char *)a;   // single cast, NOT double-deref
@@ -304,7 +304,7 @@ int compare_str(const void *a, const void *b) {
 
 /**
  * Checks if the list is sorted according to the provided comparison function.
- * AI Use: Written By AI
+ * AI Use: AI Assisted
  */
 bool is_sorted(const List *list, int (*cmp)(const void *, const void *)) {
     if (!list || !cmp) return false;          // defensive: need a list and a comparator

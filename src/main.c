@@ -8,7 +8,11 @@
 #define MIN_STR_LEN 5
 #define MAX_STR_LEN 15
 
-// Generate a random string of length between MIN_STR_LEN and MAX_STR_LEN
+/**
+ * Generate a random string of length between MIN_STR_LEN and MAX_STR_LEN.
+ * Returns a heap-allocated string. Caller must free the result.
+ * AI Use: AI Assisted
+ */
 char *random_string() {
     int len = MIN_STR_LEN + rand() % (MAX_STR_LEN - MIN_STR_LEN + 1);
     char *str = malloc((size_t)len + 1);
@@ -18,7 +22,10 @@ char *random_string() {
     return str;
 }
 
-
+/**
+ * Struct for passing arguments to sorting threads.
+ * AI Use: AI Assisted
+ */
 typedef struct {
     List *list;
     size_t start;
@@ -33,6 +40,12 @@ static void *sort_thread(void *arg) {
 }
 
 #ifndef TEST 
+/**
+ * Main entry point for the threaded list sort/merge program.
+ * Handles command-line arguments, list creation, population, threaded sorting, merging, and output.
+ * Usage: myapp <int|string> <length>
+ * AI Use: AI Assisted
+ */
 int main(int argc, char *argv[]) {
     if (argc != 3) {
         printf("Usage: %s <int|string> <length>\n", argv[0]);
@@ -79,7 +92,10 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Two-thread sort on one list: [0, mid) and [mid, n)
+    /**
+     * Thread Function--two thread sort on one list: [0, mid) and [mid, n)
+     * AI Use: AI Assisted
+     */
     size_t mid = n / 2;
     int (*cmp)(const void *, const void *) = use_ints ? compare_int : compare_str;
 
@@ -93,7 +109,7 @@ int main(int argc, char *argv[]) {
     pthread_join(t2, NULL);
 
     // Merge the two sorted sublists into a single sorted list.
-    // We keep to the "one list for threads" rule. For merging, we move
+    // Keep to the "one list for threads" rule. For merging,move
     // the second half to a temporary list and use your list_merge().
     List *right = list_create(LIST_LINKED_SENTINEL);
     if (!right) { fprintf(stderr, "Failed to create temp list.\n"); return 1; }
