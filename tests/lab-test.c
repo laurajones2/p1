@@ -10,6 +10,7 @@
 // --- ALLOC/DESTROY mocking for allocation failure testing ---
 static int alloc_fail_after = -1;
 static int alloc_call_count = 0;
+
 void *test_alloc(size_t size)
 {
     alloc_call_count++;

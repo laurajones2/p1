@@ -284,7 +284,6 @@ int compare_int(const void *a, const void *b) {
     return int_b - int_a;
 }
 
-#include <string.h>
 /**
  * Comparison function for sorting strings in lexicographical order.
  * AI Use: AI Assisted
@@ -297,8 +296,6 @@ int compare_str(const void *a, const void *b) {
     if (!sb) return 1;
     return strcmp(sa, sb);               // ascending lexicographic
 }
-
-#include <string.h>
 
 
 
